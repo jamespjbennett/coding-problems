@@ -19,30 +19,49 @@ require 'pry'
 
 def serialize(root, array)
   if root == nil
-    array.push(nil)
+    array.push('N')
     return
   else
     array.push(root.val)
     serialize(root.left, array)
     serialize(root.right, array)
   end
-  array.compact.join(",")
+  array.join(",")
+end
+
+def deserialize(array)
+  if array[@index] == "N" ||  array[@index] == array.length-1
+    @index +=1
+    return
+  end
+  root = Node.new(array[@index])
+  @index += 1
+  root.left = deserialize(array)
+  root.right = deserialize(array)
+  root
 end
 
 
 class Node
   attr_reader :val, :left, :right
+  attr_writer :val, :left, :right
+
   def initialize(val, left=nil, right=nil)
     @val = val
     @left = left
     @right = right
   end
+
 end
 
-node1 = Node.new('root', Node.new('l', Node.new('l.l')), Node.new('right'))
+node1 = Node.new('root', Node.new('l', Node.new('l.l')), Node.new('r'))
 array = []
 string = serialize(node1, array)
 p string
+@index = 0
+deserialized = deserialize(string.split(','))
+p deserialized.left.left.val == "l.l"
+
 #              "root"
 #           /          \
 #       "l"             "r"
